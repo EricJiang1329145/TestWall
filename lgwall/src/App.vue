@@ -411,4 +411,38 @@ function handlePageChange(page: number): void {
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
+
+/* 全局样式重置，去除默认边距和滚动条 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; /* 隐藏水平滚动条 */
+  background-color: #f5f5f5; /* 设置与内容区域相同的背景色 */
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5; /* 确保应用容器背景色一致 */
+}
+
+/* 去除body元素的默认滚动条 */
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
 </style>
