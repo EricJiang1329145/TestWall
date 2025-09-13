@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import ThumbUpIcon from 'vue-material-design-icons/ThumbUp.vue';
 import CommentIcon from 'vue-material-design-icons/Comment.vue';
 import ShareIcon from 'vue-material-design-icons/Share.vue';
+import ChevronLeftIcon from 'vue-material-design-icons/ChevronLeft.vue';
+import ChevronRightIcon from 'vue-material-design-icons/ChevronRight.vue';
 import type { Message, Comment } from '../types';
 
 // 定义组件属性
@@ -14,6 +16,77 @@ const props = defineProps<{
 const emit = defineEmits(['toggleComment', 'submitComment']);
 
 const showCommentInput = ref(false);
+
+// 评论分页相关状态
+const commentsPerPage = 5; // 每页显示5条评论
+const currentCommentPage = ref<{[key: number]: number}>({});
+
+/**
+ * 获取当前帖子的评论分页数据
+ */
+const paginatedComments = computed(() => {
+  if (!props.message.comments || props.message.comments.length === 0) {
+    return [];
+  }
+  
+  const page = currentCommentPage.value[props.message.id] || 1;
+  const startIndex = (page - 1) * commentsPerPage;
+  const endIndex = startIndex + commentsPerPage;
+  
+  return props.message.comments.slice(startIndex, endIndex);
+});
+
+/**
+ * 获取总页数
+ */
+const totalCommentPages = computed(() => {
+  if (!props.message.comments || props.message.comments.length === 0) {
+    return 0;
+  }
+  
+  return Math.ceil(props.message.comments.length / commentsPerPage);
+});
+
+/**
+ * 检查是否需要显示评论分页
+ */
+const shouldShowCommentPagination = computed(() => {
+  return props.message.comments && props.message.comments.length > commentsPerPage;
+});
+
+/**
+ * 切换到上一页评论
+ */
+function prevCommentPage(): void {
+  const messageId = props.message.id;
+  const currentPage = currentCommentPage.value[messageId] || 1;
+  
+  if (currentPage > 1) {
+    currentCommentPage.value[messageId] = currentPage - 1;
+  }
+}
+
+/**
+ * 切换到下一页评论
+ */
+function nextCommentPage(): void {
+  const messageId = props.message.id;
+  const currentPage = currentCommentPage.value[messageId] || 1;
+  
+  if (currentPage < totalCommentPages.value) {
+    currentCommentPage.value[messageId] = currentPage + 1;
+  }
+}
+
+/**
+ * 跳转到指定页码
+ */
+function goToCommentPage(page: number): void {
+  const messageId = props.message.id;
+  if (page >= 1 && page <= totalCommentPages.value) {
+    currentCommentPage.value[messageId] = page;
+  }
+}
 
 /**
  * 格式化时间显示
@@ -110,27 +183,66 @@ function handleSubmitComment(): void {
       </button>
     </div>
     
-    <!-- 评论区域 -->
-    <div class="comments-section" v-if="message.comments && message.comments.length > 0">
-      <div 
-        v-for="comment in message.comments" 
-        :key="comment.id" 
-        class="comment-item"
-      >
-        <div class="comment-header">
-          <div class="comment-user-info">
-            <div class="comment-avatar">匿</div>
-            <div class="comment-user-details">
-              <span class="comment-username">{{ comment.user || '匿名用户' }}</span>
-              <span class="comment-time">{{ formatTime(comment.timestamp) }}</span>
+    <!-- 评论列表 -->
+      <div v-if="message.comments && message.comments.length > 0" class="comments-section">
+        <!-- 分页显示的评论 -->
+        <div v-for="(comment, index) in paginatedComments" :key="index" class="comment-item">
+          <div class="comment-header">
+            <div class="comment-user-info">
+              <div class="comment-avatar">
+                {{ comment.user ? comment.user.charAt(0).toUpperCase() : '?' }}
+              </div>
+              <div class="comment-user-details">
+                <span class="comment-username">{{ comment.user || '匿名用户' }}</span>
+                <span class="comment-time">{{ formatTime(comment.timestamp) }}</span>
+              </div>
             </div>
           </div>
+          <div class="comment-content">
+            <p class="comment-text">{{ comment.text }}</p>
+          </div>
         </div>
-        <div class="comment-content">
-          <p class="comment-text">{{ comment.text }}</p>
+
+        <!-- 评论分页控件 -->
+        <div v-if="shouldShowCommentPagination" class="comment-pagination">
+          <div class="pagination-controls">
+            <button 
+              class="pagination-btn" 
+              :disabled="(currentCommentPage[message.id] || 1) === 1"
+              @click="prevCommentPage"
+            >
+              <ChevronLeftIcon :size="16" />
+            </button>
+            
+            <span class="pagination-info">
+              第 {{ currentCommentPage[message.id] || 1 }} 页 / 共 {{ totalCommentPages }} 页
+              ({{ message.comments.length }} 条评论)
+            </span>
+            
+            <button 
+              class="pagination-btn" 
+              :disabled="(currentCommentPage[message.id] || 1) === totalCommentPages"
+              @click="nextCommentPage"
+            >
+              <ChevronRightIcon :size="16" />
+            </button>
+          </div>
+          
+          <!-- 页码选择器 -->
+          <div v-if="totalCommentPages > 2" class="page-selector">
+            <span>跳转到: </span>
+            <select 
+              :value="currentCommentPage[message.id] || 1" 
+              @change="goToCommentPage(Number($event.target.value))"
+              class="page-select"
+            >
+              <option v-for="page in totalCommentPages" :key="page" :value="page">
+                第 {{ page }} 页
+              </option>
+            </select>
+          </div>
         </div>
       </div>
-    </div>
     
     <!-- 添加评论输入框 -->
     <div class="add-comment-section" v-if="showCommentInput">
@@ -368,6 +480,74 @@ function handleSubmitComment(): void {
   font-size: 0.95rem;
 }
 
+/* 评论分页控件 */
+.comment-pagination {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pagination-btn {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #f5f5f5;
+  border-color: #ccc;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 0.85rem;
+  color: #666;
+  min-width: 180px;
+  text-align: center;
+}
+
+.page-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.page-select {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+  font-size: 0.85rem;
+}
+
+.page-select:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
 /* 添加评论区域 */
 .add-comment-section {
   border-top: 1px solid #eee;
@@ -524,5 +704,39 @@ function handleSubmitComment(): void {
   background-color: #3a3a3a;
   border-color: #555;
   color: #f6f6f6;
+}
+
+/* 深色模式下的分页控件样式 */
+.dark .comment-pagination {
+  border-color: #444;
+}
+
+.dark .pagination-btn {
+  background-color: #3a3a3a;
+  border-color: #555;
+  color: #f6f6f6;
+}
+
+.dark .pagination-btn:hover:not(:disabled) {
+  background-color: #4a4a4a;
+  border-color: #666;
+}
+
+.dark .pagination-info {
+  color: #ccc;
+}
+
+.dark .page-selector {
+  color: #ccc;
+}
+
+.dark .page-select {
+  background-color: #3a3a3a;
+  border-color: #555;
+  color: #f6f6f6;
+}
+
+.dark .page-select:focus {
+  border-color: #1976d2;
 }
 </style>
