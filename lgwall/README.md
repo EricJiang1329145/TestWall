@@ -51,3 +51,16 @@ npm run build
 
 ### 2025-09-13
 - 将原有的emoji图标替换为Material Design Icons图标库
+
+### 2025-01-15
+- **代码结构优化**: 将App.vue拆分为多个组件和组合式函数
+  - 创建 `src/components/Header.vue` - 头部导航组件
+  - 创建 `src/components/PostCard.vue` - 帖子卡片组件
+  - 创建 `src/components/Pagination.vue` - 分页组件
+  - 创建 `src/composables/useMessages.ts` - 帖子数据管理组合式函数
+  - 创建 `src/composables/useDarkMode.ts` - 深色模式管理组合式函数
+  - 创建 `src/composables/useComments.ts` - 评论管理组合式函数
+  - 创建 `src/types/index.ts` - TypeScript类型定义文件
+- **TypeScript类型安全**: 添加完整的类型定义，包括Message、Comment等接口
+- **组件化架构**: 重构App.vue使用组件化架构，提高代码可维护性和复用性
+- **逻辑复用**: 使用Vue 3组合式API实现逻辑复用，分离关注点
