@@ -29,9 +29,9 @@ export function useMessages(): MessagesState {
         pageSize.value = pageSizeData.page_size || 10;
       }
       
-      // 调用服务器API获取帖子数据
-      const start = page * pageSize.value;
-      const end = start + pageSize.value;
+      // 调用服务器API获取帖子数据（正确的分页计算）
+      const start = (page * pageSize.value) - pageSize.value; // 从0开始
+      const end = page * pageSize.value; // 到pageSize结束
       const response = await fetch(`/api/get_messages?start=${start}&end=${end}`);
       
       if (!response.ok) {
