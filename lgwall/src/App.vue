@@ -40,31 +40,83 @@ const layoutMode = computed(() => {
 });
 
 /**
- * 将帖子列表分成相应列数
+ * 将帖子列表按时间顺序进行类似小红书的排列
+ * 实现从左到右、从上到下的时间顺序排列，同一行或相邻行时间尽可能接近
+ * 同时采用智能高度平衡算法，确保各列高度均匀分布
  */
 const messagesInColumns = computed(() => {
   const totalMessages = messages.value.length;
   
   if (layoutMode.value === 'single-column' || totalMessages <= 1) {
-    return [messages.value]; // 单列布局
+    return [messages.value]; // 单列布局直接返回
   }
   
-  if (layoutMode.value === 'two-columns') {
-    const midIndex = Math.ceil(totalMessages / 2);
-    return [
-      messages.value.slice(0, midIndex),
-      messages.value.slice(midIndex)
-    ];
-  }
+  // 按时间倒序排列（最新的在前面）
+  const sortedMessages = [...messages.value].sort((a, b) => 
+    new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
   
-  // 三列布局
-  const colSize = Math.ceil(totalMessages / 3);
-  return [
-    messages.value.slice(0, colSize),
-    messages.value.slice(colSize, colSize * 2),
-    messages.value.slice(colSize * 2)
-  ];
+  const columnCount = layoutMode.value === 'two-columns' ? 2 : 3;
+  const columns: Message[][] = Array.from({ length: columnCount }, () => []);
+  
+  // 智能高度平衡算法：将帖子分配到当前高度最小的列
+  // 使用虚拟高度估算（基于内容长度、图片数量、评论数量等）
+  const columnHeights = Array(columnCount).fill(0);
+  
+  sortedMessages.forEach((message) => {
+    // 估算帖子高度（单位：虚拟高度单位）
+    const estimatedHeight = estimatePostHeight(message);
+    
+    // 找到当前高度最小的列
+    const minHeightIndex = columnHeights.indexOf(Math.min(...columnHeights));
+    
+    // 将帖子分配到该列并更新列高度
+    columns[minHeightIndex].push(message);
+    columnHeights[minHeightIndex] += estimatedHeight;
+  });
+  
+  return columns;
 });
+
+/**
+ * 估算帖子高度（基于内容长度、附件数量、评论数量等）
+ * 返回虚拟高度单位，用于平衡各列高度
+ */
+function estimatePostHeight(message: Message): number {
+  let height = 0;
+  
+  // 基础高度（卡片边框、内边距等）
+  height += 20;
+  
+  // 文本内容高度估算（每50个字符增加1单位高度）
+  if (message.text) {
+    height += Math.ceil(message.text.length / 50);
+  }
+  
+  // 图片附件高度（每张图片增加15-25单位高度）
+  if (message.files && message.files.length > 0) {
+    const imageCount = message.files.filter(file => 
+      /.(jpg|jpeg|png|gif|bmp|webp)$/i.test(file)
+    ).length;
+    height += imageCount * 20;
+  }
+  
+  // 视频附件高度（每个视频增加25单位高度）
+  if (message.files && message.files.length > 0) {
+    const videoCount = message.files.filter(file => 
+      /.(mp4|avi|mov|wmv|flv|webm)$/i.test(file)
+    ).length;
+    height += videoCount * 25;
+  }
+  
+  // 评论数量影响高度（每5条评论增加1单位高度）
+  if (message.comments && message.comments.length > 0) {
+    height += Math.ceil(message.comments.length / 5);
+  }
+  
+  // 确保最小高度
+  return Math.max(height, 30);
+}
 
 // 组件挂载时获取数据
 onMounted(() => {
