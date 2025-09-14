@@ -94,7 +94,7 @@ const pageNumbers = computed(() => {
       class="pagination-btn"
       :class="{ active: currentPage === page }"
       :aria-label="`第${page}页`"
-      :aria-current="currentPage === page ? 'page' : null"
+      :aria-current="currentPage === page ? 'page' : undefined"
     >
       {{ page }}
     </button>
