@@ -41,11 +41,12 @@ function handleToggleDarkMode(): void {
 
 <style scoped>
 .header {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: var(--card-background);
+  box-shadow: var(--shadow-light);
   position: sticky;
   top: 0;
   z-index: 100;
+  transition: all 0.3s ease;
 }
 
 .header .container {
@@ -60,7 +61,10 @@ function handleToggleDarkMode(): void {
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #1976d2;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin: 0;
 }
 
@@ -72,28 +76,32 @@ function handleToggleDarkMode(): void {
 .refresh-btn, .mode-toggle-btn {
   padding: 0.5rem 1rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  box-shadow: var(--shadow-light);
 }
 
 .refresh-btn {
-  background-color: #1976d2;
+  background: var(--gradient-primary);
   color: white;
 }
 
 .refresh-btn:hover {
-  background-color: #1565c0;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
 }
 
 .mode-toggle-btn {
-  background-color: #4caf50;
+  background: var(--gradient-secondary);
   color: white;
 }
 
 .mode-toggle-btn:hover {
-  background-color: #388e3c;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
 }
 
 /* 响应式设计 */
@@ -118,7 +126,7 @@ function handleToggleDarkMode(): void {
 
 /* 深色模式样式 */
 .dark .header {
-  background-color: #1e1e1e;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background-color: var(--card-background);
+  box-shadow: var(--shadow-medium);
 }
 </style>

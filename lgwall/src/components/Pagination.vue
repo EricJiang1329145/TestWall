@@ -142,21 +142,24 @@ const pageNumbers = computed(() => {
 
 .pagination-btn {
   padding: 0.5rem 1rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: #fff;
-  color: #333;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--card-background);
+  color: var(--text-primary);
   cursor: pointer;
   font-size: 0.9rem;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   min-width: 44px;
   text-align: center;
+  box-shadow: var(--shadow-light);
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background-color: #1976d2;
+  background: var(--gradient-primary);
   color: white;
-  border-color: #1976d2;
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
 }
 
 .pagination-btn:disabled {
@@ -165,10 +168,11 @@ const pageNumbers = computed(() => {
 }
 
 .pagination-btn.active {
-  background-color: #1976d2;
+  background: var(--gradient-primary);
   color: white;
-  border-color: #1976d2;
+  border-color: var(--primary-color);
   font-weight: 600;
+  box-shadow: var(--shadow-medium);
 }
 
 .pagination-prev,
@@ -178,15 +182,43 @@ const pageNumbers = computed(() => {
 
 .pagination-ellipsis {
   padding: 0.5rem;
-  color: #666;
+  color: var(--text-muted);
   font-size: 0.9rem;
 }
 
 .page-info {
   margin-left: 1rem;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
+}
+
+/* 深色模式样式 - 使用变量自动适配 */
+.dark .pagination-btn {
+  background-color: var(--card-background);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-medium);
+}
+
+.dark .pagination-btn:hover:not(:disabled) {
+  background: var(--gradient-primary);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.dark .pagination-btn.active {
+  background: var(--gradient-primary);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.dark .pagination-ellipsis {
+  color: var(--text-muted);
+}
+
+.dark .page-info {
+  color: var(--text-secondary);
 }
 
 /* 响应式设计 */
@@ -211,32 +243,5 @@ const pageNumbers = computed(() => {
     margin-left: 0.5rem;
     font-size: 0.8rem;
   }
-}
-
-/* 深色模式样式 */
-.dark .pagination-btn {
-  background-color: #2a2a2a;
-  border-color: #444;
-  color: #f6f6f6;
-}
-
-.dark .pagination-btn:hover:not(:disabled) {
-  background-color: #1976d2;
-  color: white;
-  border-color: #1976d2;
-}
-
-.dark .pagination-btn.active {
-  background-color: #1976d2;
-  color: white;
-  border-color: #1976d2;
-}
-
-.dark .pagination-ellipsis {
-  color: #ccc;
-}
-
-.dark .page-info {
-  color: #ccc;
 }
 </style>

@@ -324,8 +324,9 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
 /* 主要内容区域 */
 .main-content {
   flex: 1;
-  background-color: #f5f5f5;
+  background-color: var(--surface-color);
   padding: 2rem 0;
+  transition: background-color 0.3s ease;
 }
 
 .container {
@@ -337,7 +338,7 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
 .data-source {
   text-align: center;
   margin-bottom: 1.5rem;
-  color: #666;
+  color: var(--text-muted);
   font-size: 0.9rem;
 }
 
@@ -353,8 +354,8 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
 .spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #1976d2;
+  border: 4px solid rgba(124, 58, 237, 0.2);
+  border-top: 4px solid var(--primary-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
@@ -367,12 +368,13 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
 
 /* 错误状态 */
 .error {
-  background-color: #ffebee;
-  color: #c62828;
+  background-color: rgba(124, 58, 237, 0.1);
+  color: var(--primary-color);
   padding: 1.5rem;
   border-radius: 4px;
   text-align: center;
   margin-bottom: 1.5rem;
+  border: 1px solid rgba(124, 58, 237, 0.2);
 }
 
 .error-actions {
@@ -387,15 +389,20 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  background-color: #c62828;
+  background-color: var(--primary-color);
   color: white;
+  transition: background-color 0.3s;
+}
+
+.error-actions button:hover {
+  background-color: var(--primary-hover);
 }
 
 /* 帖子列表 */
 .no-data {
   text-align: center;
   padding: 2rem;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .posts-container {
@@ -447,8 +454,8 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
 .btn-spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid #f3f3f3;
-  border-top: 2px solid #1976d2;
+  border: 2px solid rgba(124, 58, 237, 0.2);
+  border-top: 2px solid var(--primary-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -457,6 +464,7 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  color: var(--text-secondary);
 }
 
 .btn-spinner {
@@ -468,38 +476,43 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
 
 .load-more-btn {
   padding: 0.75rem 1.5rem;
-  background-color: #1976d2;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 1rem;
-  transition: background-color 0.3s;
-  min-width: 120px; /* 确保按钮宽度稳定 */
+  transition: all 0.3s ease;
+  min-width: 120px;
+  box-shadow: var(--shadow-light);
 }
 
 .load-more-btn:hover:not(:disabled) {
-  background-color: #1565c0;
+  background-color: var(--primary-hover);
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-1px);
 }
 
 .load-more-btn:disabled {
-  background-color: #ccc;
+  background-color: var(--text-muted);
   cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .all-loaded {
   text-align: center;
   padding: 2rem 0;
-  color: #666;
+  color: var(--text-muted);
   font-size: 0.9rem;
 }
 
 /* 底部 */
 .footer {
-  background-color: #333;
-  color: #fff;
+  background: var(--gradient-primary);
+  color: white;
   padding: 1.5rem 0;
   text-align: center;
+  box-shadow: var(--shadow-medium);
 }
 
 /* 响应式设计 */
@@ -509,18 +522,19 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
   }
 }
 
-/* 深色模式样式 */
+/* 深色模式样式 - 使用变量自动适配 */
 .dark .main-content {
-  background-color: #2a2a2a;
+  background-color: var(--surface-color);
 }
 
 .dark .data-source {
-  color: #ccc;
+  color: var(--text-muted);
 }
 
 .dark .error {
-  background-color: #331a1a;
-  color: #ff6b6b;
+  background-color: rgba(139, 92, 246, 0.1);
+  border-color: rgba(139, 92, 246, 0.2);
+  color: var(--text-primary);
 }
 </style>
 
@@ -531,14 +545,56 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
   line-height: 24px;
   font-weight: 400;
 
-  color: #0f0f0f;
-  background-color: #ffffff;
+  /* 紫色主题变量 - 浅色模式 */
+  --primary-color: #7c3aed;
+  --primary-hover: #6d28d9;
+  --primary-light: #a855f7;
+  --primary-dark: #5b21b6;
+  --secondary-color: #a855f7;
+  --accent-color: #c084fc;
+  --background-color: #ffffff;
+  --surface-color: #fafafa;
+  --card-background: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --border-color: #e2e8f0;
+  --shadow-light: 0 1px 3px rgba(124, 58, 237, 0.1);
+  --shadow-medium: 0 4px 6px rgba(124, 58, 237, 0.1);
+  --shadow-heavy: 0 10px 15px rgba(124, 58, 237, 0.1);
+  --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  --gradient-secondary: linear-gradient(135deg, #a855f7 0%, #c084fc 100%);
+
+  color: var(--text-primary);
+  background-color: var(--background-color);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+}
+
+/* 深色模式变量 */
+.dark:root {
+  --primary-color: #8b5cf6;
+  --primary-hover: #7c3aed;
+  --primary-light: #a855f7;
+  --primary-dark: #6d28d9;
+  --secondary-color: #a855f7;
+  --accent-color: #c084fc;
+  --background-color: #0f172a;
+  --surface-color: #1e293b;
+  --card-background: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --border-color: #334155;
+  --shadow-light: 0 1px 3px rgba(139, 92, 246, 0.2);
+  --shadow-medium: 0 4px 6px rgba(139, 92, 246, 0.2);
+  --shadow-heavy: 0 10px 15px rgba(139, 92, 246, 0.2);
+  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  --gradient-secondary: linear-gradient(135deg, #a855f7 0%, #c084fc 100%);
 }
 
 /* 全局样式重置，去除默认边距和滚动条 */
@@ -554,7 +610,8 @@ html, body {
   width: 100%;
   height: 100%;
   overflow-x: hidden; /* 隐藏水平滚动条 */
-  background-color: #f5f5f5; /* 设置与内容区域相同的背景色 */
+  background-color: var(--surface-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #app {
@@ -562,7 +619,8 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #f5f5f5; /* 确保应用容器背景色一致 */
+  background-color: var(--surface-color);
+  transition: background-color 0.3s ease;
 }
 
 /* 去除body元素的默认滚动条 */

@@ -297,21 +297,22 @@ function downloadFile(filename: string): void {
 
 <style scoped>
 .post-card {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--card-background);
+  border-radius: 12px;
+  box-shadow: var(--shadow-light);
   overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
 }
 
 .post-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-medium);
 }
 
 .post-header {
   padding: 1rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .user-info {
@@ -324,13 +325,14 @@ function downloadFile(filename: string): void {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #1976d2;
+  background: var(--gradient-primary);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   font-size: 1.2rem;
+  box-shadow: var(--shadow-light);
 }
 
 .user-details {
@@ -340,12 +342,12 @@ function downloadFile(filename: string): void {
 
 .username {
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .post-time {
   font-size: 0.8rem;
-  color: #777;
+  color: var(--text-muted);
 }
 
 .post-content {
@@ -354,7 +356,7 @@ function downloadFile(filename: string): void {
 
 .post-text {
   line-height: 1.6;
-  color: #333;
+  color: var(--text-primary);
   margin: 0 0 1rem 0;
   white-space: pre-wrap;
 }
@@ -367,51 +369,25 @@ function downloadFile(filename: string): void {
 }
 
 .attachment {
-  max-width: 100%;
-}
-
-.attachment-image {
-  max-width: 100%;
-  max-height: 300px;
-  border-radius: 4px;
-  object-fit: cover;
-}
-
-.attachment {
   position: relative;
   border-radius: 8px;
   overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.3s ease;
   cursor: pointer;
+  border: 1px solid var(--border-color);
 }
 
 .attachment:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.attachment-image {
-  max-width: 300px;
-  max-height: 300px;
-}
-
-.attachment-video {
-  max-width: 300px;
-  max-height: 200px;
+  box-shadow: var(--shadow-medium);
 }
 
 .attachment-file {
   max-width: 200px;
   padding: 1rem;
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-}
-
-.image-container,
-.video-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
 }
 
 .attachment-thumbnail {
@@ -427,30 +403,14 @@ function downloadFile(filename: string): void {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(124, 58, 237, 0.8);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.3s ease;
   border-radius: 6px;
-}
-
-.image-container:hover .attachment-overlay,
-.video-container:hover .attachment-overlay {
-  opacity: 1;
-}
-
-.overlay-icon {
-  color: white;
-  margin-bottom: 0.5rem;
-}
-
-.overlay-text {
-  color: white;
-  font-size: 0.8rem;
-  font-weight: 500;
 }
 
 .video-placeholder {
@@ -459,47 +419,28 @@ function downloadFile(filename: string): void {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   border-radius: 6px;
 }
 
-.video-icon {
-  color: white;
-}
-
-.file-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  text-align: center;
-}
-
-.file-icon-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .file-type-icon {
-  color: #6c757d;
+  color: var(--primary-color);
 }
 
 .download-icon {
   position: absolute;
   bottom: -4px;
   right: -4px;
-  color: #28a745;
-  background: white;
+  color: var(--primary-color);
+  background: var(--card-background);
   border-radius: 50%;
   padding: 2px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-light);
 }
 
 .file-name {
   font-size: 0.8rem;
-  color: #495057;
+  color: var(--text-secondary);
   font-weight: 500;
   word-break: break-all;
   max-width: 100%;
@@ -507,11 +448,10 @@ function downloadFile(filename: string): void {
 
 .download-text {
   font-size: 0.75rem;
-  color: #28a745;
+  color: var(--primary-color);
   font-weight: 500;
 }
 
-/* 模态框样式 */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -529,12 +469,13 @@ function downloadFile(filename: string): void {
 .image-modal,
 .video-modal {
   position: relative;
-  background: white;
+  background: var(--card-background);
   border-radius: 12px;
   overflow: hidden;
   max-width: 90vw;
   max-height: 90vh;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-heavy);
+  border: 1px solid var(--border-color);
 }
 
 .modal-close {
@@ -544,7 +485,7 @@ function downloadFile(filename: string): void {
   width: 40px;
   height: 40px;
   border: none;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--primary-color);
   color: white;
   border-radius: 50%;
   font-size: 1.5rem;
@@ -554,32 +495,12 @@ function downloadFile(filename: string): void {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
 }
 
 .modal-close:hover {
-  background: rgba(0, 0, 0, 0.9);
-}
-
-.preview-image {
-  max-width: 100%;
-  max-height: 80vh;
-  object-fit: contain;
-}
-
-.video-player {
-  width: 100%;
-  max-width: 800px;
-  max-height: 80vh;
-  background: black;
-}
-
-.modal-actions {
-  padding: 1rem;
-  background: #f8f9fa;
-  border-top: 1px solid #e9ecef;
-  display: flex;
-  justify-content: center;
+  background: var(--primary-hover);
+  transform: scale(1.1);
 }
 
 .download-btn {
@@ -588,23 +509,26 @@ function downloadFile(filename: string): void {
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
   border: none;
-  background: #007bff;
+  background: var(--gradient-primary);
   color: white;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-light);
 }
 
 .download-btn:hover {
-  background: #0056b3;
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
 }
 
 .post-footer {
   display: flex;
   padding: 1rem;
-  border-top: 1px solid #eee;
-  background-color: #fafafa;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--surface-color);
 }
 
 .action-btn {
@@ -614,183 +538,147 @@ function downloadFile(filename: string): void {
   padding: 0.5rem 1rem;
   border: none;
   background: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
-  color: #666;
-  transition: background-color 0.2s;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
 }
 
 .action-btn:hover {
-  background-color: #e0e0e0;
-}
-
-.like-btn {
-  margin-right: auto;
+  background-color: var(--surface-color);
+  color: var(--primary-color);
 }
 
 .like-btn:hover {
-  color: #e91e63;
+  color: var(--primary-color);
 }
 
 .comment-btn:hover {
-  color: #1976d2;
+  color: var(--primary-color);
 }
 
 .share-btn:hover {
-  color: #4caf50;
+  color: var(--primary-color);
 }
 
 .icon {
   font-size: 1.1rem;
   vertical-align: middle;
+  color: var(--text-muted);
+  transition: color 0.3s ease;
 }
 
 .count {
   font-weight: 500;
+  color: var(--text-secondary);
 }
 
-/* 评论区域 */
 .comments-section {
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--border-color);
   padding: 1rem;
-  background-color: #fafafa;
+  background-color: var(--surface-color);
 }
 
 .comment-item {
   margin-bottom: 1rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #eee;
-}
-
-.comment-item:last-child {
-  margin-bottom: 0;
-  padding-bottom: 0;
-  border-bottom: none;
-}
-
-.comment-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.comment-user-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .comment-avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: #9c27b0;
+  background: var(--gradient-secondary);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   font-size: 0.9rem;
-}
-
-.comment-user-details {
-  display: flex;
-  flex-direction: column;
+  box-shadow: var(--shadow-light);
 }
 
 .comment-username {
   font-weight: 500;
-  color: #333;
-  font-size: 0.9rem;
-}
-
-.comment-time {
-  font-size: 0.75rem;
-  color: #777;
-}
-
-.comment-content {
-  margin-left: 2.5rem;
+  color: var(--text-primary);
 }
 
 .comment-text {
   line-height: 1.5;
-  color: #444;
+  color: var(--text-primary);
   margin: 0;
   font-size: 0.95rem;
 }
 
-/* 评论容器 - 支持滚动 */
 .comments-container {
-  max-height: 300px; /* 限制最大高度 */
-  overflow-y: auto; /* 允许垂直滚动 */
-  padding: 0.5rem 0;
+  max-height: 300px; /* 设置最大高度 */
+  overflow-y: auto; /* 启用垂直滚动 */
+  scroll-behavior: smooth; /* 平滑滚动效果 */
 }
 
-/* 滚动条样式 */
+/* 确保滚动条通用宽度在普通模式中也已定义 */
 .comments-container::-webkit-scrollbar {
   width: 6px;
 }
 
 .comments-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--surface-color);
   border-radius: 3px;
 }
 
 .comments-container::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: var(--primary-color);
   border-radius: 3px;
+  opacity: 0.7;
 }
 
 .comments-container::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: var(--primary-hover);
+  opacity: 1;
 }
 
-/* 添加评论区域 */
 .add-comment-section {
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--border-color);
   padding: 1rem;
-  background-color: #fff;
-}
-
-.comment-input-container {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.comment-input-container .comment-avatar {
-  flex-shrink: 0;
+  background-color: var(--card-background);
 }
 
 .comment-input {
   flex: 1;
   padding: 0.75rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   font-size: 0.95rem;
   outline: none;
-  transition: border-color 0.2s;
+  transition: all 0.3s ease;
+  background-color: var(--surface-color);
+  color: var(--text-primary);
 }
 
 .comment-input:focus {
-  border-color: #1976d2;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
 }
 
 .submit-comment-btn {
   padding: 0.5rem 1rem;
   border: none;
-  border-radius: 4px;
-  background-color: #1976d2;
+  border-radius: 6px;
+  background: var(--gradient-primary);
   color: white;
   cursor: pointer;
   font-size: 0.9rem;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  box-shadow: var(--shadow-light);
 }
 
 .submit-comment-btn:hover {
-  background-color: #1565c0;
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
 }
 
 /* 响应式设计 */
@@ -859,62 +747,131 @@ function downloadFile(filename: string): void {
   }
 }
 
-/* 深色模式样式 */
+/* 深色模式样式 - 使用变量自动适配 */
 .dark .post-card {
-  background-color: #2a2a2a;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  background-color: var(--card-background);
+  box-shadow: var(--shadow-medium);
+  border-color: var(--border-color);
 }
 
 .dark .post-header, 
 .dark .post-footer, 
 .dark .comments-section, 
 .dark .add-comment-section {
-  border-color: #444;
+  border-color: var(--border-color);
 }
 
 .dark .post-footer, 
 .dark .comments-section {
-  background-color: #252525;
+  background-color: var(--surface-color);
 }
 
 .dark .add-comment-section {
-  background-color: #2a2a2a;
+  background-color: var(--card-background);
 }
 
 .dark .username, 
 .dark .comment-username {
-  color: #f6f6f6;
+  color: var(--text-primary);
 }
 
 .dark .post-text, 
 .dark .comment-text {
-  color: #e0e0e0;
+  color: var(--text-primary);
 }
 
 .dark .attachment-file {
-  background-color: #3a3a3a;
+  background-color: var(--surface-color);
+  border-color: var(--border-color);
 }
 
 .dark .file-name {
-  color: #e0e0e0;
+  color: var(--text-secondary);
 }
 
 .dark .comment-input {
-  background-color: #3a3a3a;
-  border-color: #555;
-  color: #f6f6f6;
+  background-color: var(--surface-color);
+  border-color: var(--border-color);
+  color: var(--text-primary);
 }
 
 /* 深色模式下的评论容器样式 */
+.dark .comments-container {
+  max-height: 300px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
 .dark .comments-container::-webkit-scrollbar-track {
-  background: #3a3a3a;
+  background: var(--surface-color);
+  border-radius: 3px;
 }
 
 .dark .comments-container::-webkit-scrollbar-thumb {
-  background: #555;
+  background: var(--primary-color);
+  border-radius: 3px;
+  opacity: 0.7;
 }
 
 .dark .comments-container::-webkit-scrollbar-thumb:hover {
-  background: #666;
+  background: var(--primary-hover);
+  opacity: 1;
+}
+
+/* 评论区域样式优化 - 确保名称和日期显示在头像右侧 */
+.comment-header {
+  margin-bottom: 0.5rem !important;
+}
+
+.comment-user-info {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 0.75rem !important;
+}
+
+.comment-user-details {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.25rem !important;
+}
+
+.comment-username {
+  font-weight: 500 !important;
+  color: var(--text-primary) !important;
+  font-size: 0.9rem !important;
+}
+
+.comment-time {
+  font-size: 0.75rem !important;
+  color: var(--text-muted) !important;
+}
+
+.comment-content {
+  margin-left: calc(32px + 0.75rem) !important; /* 头像宽度 + 间距 */
+  margin-top: 0 !important;
+}
+
+/* 确保没有其他样式干扰 */
+.comment-item {
+  position: relative !important;
+}
+
+.comment-item .comment-header + .comment-content {
+  margin-left: calc(32px + 0.75rem) !important;
+}
+
+/* 响应式设计调整 */
+@media (max-width: 768px) {
+  .comment-content {
+    margin-left: calc(28px + 0.5rem) !important;
+  }
+  
+  .comment-user-info {
+    gap: 0.5rem !important;
+  }
+  
+  .comment-item .comment-header + .comment-content {
+    margin-left: calc(28px + 0.5rem) !important;
+  }
 }
 </style>
