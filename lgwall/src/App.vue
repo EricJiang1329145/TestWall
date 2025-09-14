@@ -141,10 +141,9 @@ onUnmounted(() => {
 
 /**
  * 处理滚动事件，实现无限滚动加载
- * 添加防抖机制避免频繁触发，自动触发加载更多按钮
+ * 添加防抖机制避免频繁触发
  */
 let scrollTimeout: number | null = null;
-let autoTriggered = false; // 标记是否已经自动触发过
 
 function handleScroll(): void {
   // 使用防抖避免频繁触发
@@ -161,9 +160,8 @@ function handleScroll(): void {
     // 确保有足够的内容才触发加载，避免初始状态就触发
     const hasEnoughContent = scrollHeight > clientHeight + 200;
     
-    // 当距离底部100px范围内时触发加载（提前触发，提升用户体验）
-    if (scrollTop + clientHeight >= scrollHeight - 100 && hasEnoughContent && !loading.value && hasMore.value) {
-      // 自动触发加载更多
+    // 当滚动到底部100px范围内且有足够内容时触发加载
+    if (scrollTop + clientHeight >= scrollHeight - 100 && hasEnoughContent) {
       loadMore();
     }
   }, 200); // 200ms防抖延迟
@@ -267,19 +265,10 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
             </div>
           </div>
           
-          <!-- 加载更多按钮（自动触发和手动触发） -->
-          <div v-if="hasMore && messages.length > 0" class="load-more">
-            <button 
-              @click="loadMore" 
-              class="load-more-btn"
-              :disabled="loading"
-              :class="{ 'loading': loading }"
-            >
-              <span v-if="!loading">加载更多</span>
-              <span v-else>
-                <div class="btn-spinner"></div>
-                加载中...
-              </span>
+          <!-- 加载更多按钮（当有更多数据但未触发滚动时） -->
+          <div v-if="hasMore && !loading && messages.length > 0" class="load-more">
+            <button @click="loadMore" class="load-more-btn">
+              加载更多
             </button>
           </div>
           
@@ -446,37 +435,16 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
   border-radius: 4px;
   cursor: pointer;
   font-size: 1rem;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-width: 120px;
+  transition: background-color 0.3s;
 }
 
-.load-more-btn:hover:not(:disabled) {
+.load-more-btn:hover {
   background-color: #1565c0;
-  transform: translateY(-1px);
 }
 
 .load-more-btn:disabled {
-  background-color: #1976d2;
-  opacity: 0.7;
+  background-color: #ccc;
   cursor: not-allowed;
-}
-
-.btn-spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid white;
-  border-radius: 50%;
-  animation: btn-spin 1s linear infinite;
-}
-
-@keyframes btn-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 .all-loaded {
