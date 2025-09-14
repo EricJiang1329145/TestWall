@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed, nextTick } from "vue";
 import Header from './components/Header.vue';
 import PostCard from './components/PostCard.vue';
-import Pagination from './components/Pagination.vue';
 import { useMessages } from './composables/useMessages';
 import { useDarkMode } from './composables/useDarkMode';
 import { useComments } from './composables/useComments';
 import type { Message, Comment } from './types';
 
 // 使用组合式函数管理状态
-const { messages, loading, error, currentPage, pageSize, totalMessages, fetchMessages } = useMessages();
+const { messages, loading, error, currentPage, pageSize, totalMessages, hasMore, fetchMessages, loadMore, resetAndLoad } = useMessages();
 const { isDarkMode, toggleDarkMode } = useDarkMode();
 const { showCommentInput, toggleCommentInput, submitComment } = useComments();
 
@@ -120,16 +119,55 @@ function estimatePostHeight(message: Message): number {
 
 // 组件挂载时获取数据
 onMounted(() => {
-  fetchMessages();
+  resetAndLoad();
   
   // 添加窗口大小变化监听
   window.addEventListener('resize', updateScreenWidth);
+  
+  // 添加滚动监听
+  window.addEventListener('scroll', handleScroll);
 });
 
 // 组件卸载时移除监听
 onUnmounted(() => {
   window.removeEventListener('resize', updateScreenWidth);
+  window.removeEventListener('scroll', handleScroll);
+  
+  // 清除定时器
+  if (scrollTimeout) {
+    clearTimeout(scrollTimeout);
+  }
 });
+
+/**
+ * 处理滚动事件，实现无限滚动加载
+ * 添加防抖机制避免频繁触发，自动触发加载更多按钮
+ */
+let scrollTimeout: number | null = null;
+let autoTriggered = false; // 标记是否已经自动触发过
+
+function handleScroll(): void {
+  // 使用防抖避免频繁触发
+  if (scrollTimeout) {
+    clearTimeout(scrollTimeout);
+  }
+  
+  scrollTimeout = window.setTimeout(() => {
+    // 检查是否滚动到底部附近
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+    
+    // 确保有足够的内容才触发加载，避免初始状态就触发
+    const hasEnoughContent = scrollHeight > clientHeight + 200;
+    
+    // 当距离底部100px范围内时触发加载（提前触发，提升用户体验）
+    if (scrollTop + clientHeight >= scrollHeight - 100 && hasEnoughContent && !loading.value && hasMore.value) {
+      // 自动触发加载更多
+      loadMore();
+    }
+  }, 200); // 200ms防抖延迟
+}
 
 /**
  * 处理评论提交
@@ -141,24 +179,16 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
   
   if (newComment) {
     // 更新UI显示新评论
-    const messageIndex = messages.value.findIndex(msg => msg.id === messageId);
+    const messageIndex = messages.value.findIndex((msg: Message) => msg.id === messageId);
     if (messageIndex !== -1) {
       // 如果帖子还没有评论数组，创建一个空数组
       if (!messages.value[messageIndex].comments) {
         messages.value[messageIndex].comments = [];
       }
       // 将新评论添加到帖子的评论数组中
-      messages.value[messageIndex].comments.push(newComment);
+      messages.value[messageIndex].comments!.push(newComment);
     }
   }
-}
-
-/**
- * 处理页码变化
- * @param page 目标页码
- */
-function handlePageChange(page: number): void {
-  fetchMessages(page);
 }
 </script>
 
@@ -229,13 +259,34 @@ function handlePageChange(page: number): void {
             </template>
           </div>
           
-          <!-- 分页控件 -->
-          <Pagination 
-            :current-page="currentPage"
-            :page-size="pageSize"
-            :total-messages="totalMessages"
-            @page-change="handlePageChange"
-          />
+          <!-- 加载更多提示 -->
+          <div v-if="loading && messages.length > 0" class="load-more">
+            <div class="loading-spinner">
+              <div class="spinner"></div>
+              <p>正在加载更多...</p>
+            </div>
+          </div>
+          
+          <!-- 加载更多按钮（自动触发和手动触发） -->
+          <div v-if="hasMore && messages.length > 0" class="load-more">
+            <button 
+              @click="loadMore" 
+              class="load-more-btn"
+              :disabled="loading"
+              :class="{ 'loading': loading }"
+            >
+              <span v-if="!loading">加载更多</span>
+              <span v-else>
+                <div class="btn-spinner"></div>
+                加载中...
+              </span>
+            </button>
+          </div>
+          
+          <!-- 已加载全部提示 -->
+          <div v-if="!hasMore && messages.length > 0" class="all-loaded">
+            <p>已加载全部内容</p>
+          </div>
         </div>
       </div>
     </main>
@@ -363,6 +414,76 @@ function handlePageChange(page: number): void {
 
 .posts-container.three-columns .column {
   max-width: calc(33.333% - 1rem);
+}
+
+/* 无限滚动加载样式 */
+.load-more {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loading-spinner .spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #1976d2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.load-more-btn {
+  padding: 0.75rem 1.5rem;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 120px;
+}
+
+.load-more-btn:hover:not(:disabled) {
+  background-color: #1565c0;
+  transform: translateY(-1px);
+}
+
+.load-more-btn:disabled {
+  background-color: #1976d2;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: btn-spin 1s linear infinite;
+}
+
+@keyframes btn-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.all-loaded {
+  text-align: center;
+  padding: 2rem 0;
+  color: #666;
+  font-size: 0.9rem;
 }
 
 /* 底部 */

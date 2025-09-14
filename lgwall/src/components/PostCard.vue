@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import ThumbUpIcon from 'vue-material-design-icons/ThumbUp.vue';
 import CommentIcon from 'vue-material-design-icons/Comment.vue';
 import ShareIcon from 'vue-material-design-icons/Share.vue';
-import ChevronLeftIcon from 'vue-material-design-icons/ChevronLeft.vue';
-import ChevronRightIcon from 'vue-material-design-icons/ChevronRight.vue';
 import ImageIcon from 'vue-material-design-icons/Image.vue';
 import VideoIcon from 'vue-material-design-icons/Video.vue';
 import FileDocumentIcon from 'vue-material-design-icons/FileDocument.vue';

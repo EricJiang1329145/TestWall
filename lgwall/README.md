@@ -94,3 +94,28 @@ npm run build
   - 移除评论分页相关逻辑，包括分页状态、计算属性和控制方法
   - 修改评论列表渲染方式，直接显示所有评论并支持滚动浏览
   - 添加滚动条样式，优化用户体验
+
+### 2025-04-09
+- **TypeScript错误修复**: 修复App.vue组件中的TypeScript类型错误
+  - 修复 `messages.value.findIndex` 中的参数类型问题
+  - 修复分页组件事件名称不匹配的问题
+  - 修复评论数组可能为undefined的类型检查问题
+
+### 2025-04-10
+- **TypeScript警告修复**: 修复Header.vue组件中的TypeScript警告
+  - 移除不必要的vue导入语句
+  - 优化props的使用方式，明确使用props.isDarkMode而不是直接使用isDarkMode
+
+### 2025-04-11
+- **TypeScript警告修复**: 修复PostCard.vue组件中的TypeScript警告
+  - 移除未使用的computed导入
+  - 移除未使用的ChevronLeftIcon和ChevronRightIcon导入
+
+### 2025-04-12
+- **无限滚动加载**: 将分页浏览改为无限滚动加载模式
+  - 移除分页组件和相关逻辑
+  - 实现距离底部100px时自动触发"加载更多"按钮功能（提前触发，无需完全到底）
+  - 按钮在加载过程中显示"加载中..."状态和动画
+  - 优化数据加载体验，支持追加式数据加载
+  - 保持原有响应式布局和多列显示功能
+  - 详细文档见 `docs/infinite-scroll-guide.md`

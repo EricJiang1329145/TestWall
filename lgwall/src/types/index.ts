@@ -44,5 +44,8 @@ export interface MessagesState {
   currentPage: number;
   pageSize: number;
   totalMessages: number;
-  fetchMessages: (page?: number) => Promise<void>;
+  hasMore: boolean; // 是否还有更多数据
+  fetchMessages: (page?: number, append?: boolean) => Promise<void>;
+  loadMore: () => Promise<void>;
+  resetAndLoad: () => Promise<void>;
 }

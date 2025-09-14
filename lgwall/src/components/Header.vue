@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
-
 // 定义组件属性
 const props = defineProps({
   isDarkMode: {
@@ -34,7 +32,7 @@ function handleToggleDarkMode(): void {
       <nav class="nav">
         <button @click="handleRefresh" class="refresh-btn">刷新</button>
         <button @click="handleToggleDarkMode" class="mode-toggle-btn">
-          {{ isDarkMode ? '浅色模式' : '深色模式' }}
+          {{ props.isDarkMode ? '浅色模式' : '深色模式' }}
         </button>
       </nav>
     </div>
