@@ -130,9 +130,36 @@ function handleScroll(): void {
 3. 移除滚动监听和无限滚动相关代码
 4. 使用原始版本的 `useMessages.ts`
 
+## 已实现优化
+
+### 按钮状态优化
+- **加载状态显示**：点击"加载更多"按钮后，文字变为"加载中..."
+- **转圈动画**：添加旋转的加载动画，提升视觉反馈
+- **防重复点击**：加载过程中禁用按钮，防止重复请求
+- **状态管理**：使用独立的状态变量控制按钮显示
+
+### 代码实现
+
+```typescript
+// 响应式状态
+const isLoadingMore = ref(false);
+
+// 处理按钮点击
+async function handleLoadMoreClick(): Promise<void> {
+  if (isLoadingMore.value) return;
+  
+  isLoadingMore.value = true;
+  try {
+    await loadMore();
+  } finally {
+    isLoadingMore.value = false;
+  }
+}
+```
+
 ## 后续优化建议
 
 1. 添加滚动到顶部按钮
 2. 实现数据缓存机制
 3. 添加加载进度指示器
-4. 支持手动触发加载更多
+4. 支持虚拟滚动优化大数据量

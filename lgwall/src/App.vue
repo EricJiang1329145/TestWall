@@ -12,6 +12,9 @@ const { messages, loading, error, currentPage, pageSize, totalMessages, hasMore,
 const { isDarkMode, toggleDarkMode } = useDarkMode();
 const { showCommentInput, toggleCommentInput, submitComment } = useComments();
 
+// 加载更多按钮的状态
+const isLoadingMore = ref(false);
+
 // 响应式布局状态
 const screenWidth = ref(window.innerWidth);
 
@@ -140,6 +143,20 @@ onUnmounted(() => {
 });
 
 /**
+ * 处理加载更多按钮点击
+ */
+async function handleLoadMoreClick(): Promise<void> {
+  if (isLoadingMore.value) return;
+  
+  isLoadingMore.value = true;
+  try {
+    await loadMore();
+  } finally {
+    isLoadingMore.value = false;
+  }
+}
+
+/**
  * 处理滚动事件，实现无限滚动加载
  * 添加防抖机制避免频繁触发
  */
@@ -266,9 +283,17 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
           </div>
           
           <!-- 加载更多按钮（当有更多数据但未触发滚动时） -->
-          <div v-if="hasMore && !loading && messages.length > 0" class="load-more">
-            <button @click="loadMore" class="load-more-btn">
-              加载更多
+          <div v-if="hasMore && messages.length > 0" class="load-more">
+            <button 
+              @click="handleLoadMoreClick" 
+              :disabled="isLoadingMore"
+              class="load-more-btn"
+            >
+              <span v-if="!isLoadingMore">加载更多</span>
+              <span v-else class="loading-content">
+                <div class="btn-spinner"></div>
+                加载中...
+              </span>
             </button>
           </div>
           
@@ -418,13 +443,27 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
   gap: 1rem;
 }
 
-.loading-spinner .spinner {
-  width: 30px;
-  height: 30px;
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #1976d2;
+.loading-spinner .spinner,
+.btn-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #1976d2;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+}
+
+.loading-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+  border-top-color: currentColor;
 }
 
 .load-more-btn {
@@ -436,9 +475,10 @@ async function handleSubmitComment(messageId: number, commentText: string): Prom
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.3s;
+  min-width: 120px; /* 确保按钮宽度稳定 */
 }
 
-.load-more-btn:hover {
+.load-more-btn:hover:not(:disabled) {
   background-color: #1565c0;
 }
 
